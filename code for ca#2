@@ -1,4 +1,8 @@
-//bubble sort
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+// Bubble Sort
 void bubble_sort(int arr[], int n) {
     for (int i = 0; i < n - 1; i++) {
         for (int j = 0; j < n - i - 1; j++) {
@@ -11,7 +15,7 @@ void bubble_sort(int arr[], int n) {
     }
 }
 
-//merge sort
+// Merge Sort helper function to merge two halves
 void merge(int arr[], int l, int m, int r) {
     int n1 = m - l + 1;
     int n2 = r - m;
@@ -25,9 +29,11 @@ void merge(int arr[], int l, int m, int r) {
     int i = 0, j = 0, k = l;
     while (i < n1 && j < n2) {
         if (L[i] <= R[j]) {
-            arr[k] = L[i++];
+            arr[k] = L[i];
+            i++;
         } else {
-            arr[k] = R[j++];
+            arr[k] = R[j];
+            j++;
         }
         k++;
     }
@@ -36,6 +42,7 @@ void merge(int arr[], int l, int m, int r) {
     while (j < n2) arr[k++] = R[j++];
 }
 
+// Merge Sort
 void merge_sort(int arr[], int l, int r) {
     if (l < r) {
         int m = l + (r - l) / 2;
@@ -45,22 +52,28 @@ void merge_sort(int arr[], int l, int r) {
     }
 }
 
-//quick sort
+// Quick Sort helper function for partitioning the array
 int partition(int arr[], int low, int high) {
     int pivot = arr[high];
     int i = (low - 1);
 
     for (int j = low; j < high; j++) {
         if (arr[j] < pivot) {
-            int temp = arr[++i];
+            i++;
+            int temp = arr[i];
             arr[i] = arr[j];
             arr[j] = temp;
         }
     }
-    arr[high] = arr[++i];
-    return i;
+
+    int temp = arr[i + 1];
+    arr[i + 1] = arr[high];
+    arr[high] = temp;
+
+    return i + 1;
 }
 
+// Quick Sort
 void quick_sort(int arr[], int low, int high) {
     if (low < high) {
         int pi = partition(arr, low, high);
@@ -68,3 +81,48 @@ void quick_sort(int arr[], int low, int high) {
         quick_sort(arr, pi + 1, high);
     }
 }
+
+// Function to copy an array
+void copy_array(int src[], int dest[], int n) {
+    for (int i = 0; i < n; i++) {
+        dest[i] = src[i];
+    }
+}
+
+int main() {
+    int n = 10000;
+    int arr[n], arr_copy[n];
+    
+    // Generate random array
+    srand(time(0));
+    for (int i = 0; i < n; i++) {
+        arr[i] = rand() % 10000;
+    }
+
+    // Bubble Sort
+    copy_array(arr, arr_copy, n);
+    clock_t start = clock();
+    bubble_sort(arr_copy, n);
+    clock_t end = clock();
+    double time_taken = ((double)(end - start)) / CLOCKS_PER_SEC;
+    printf("Bubble Sort took %f seconds to sort 10000 elements.\n", time_taken);
+
+    // Merge Sort
+    copy_array(arr, arr_copy, n);
+    start = clock();
+    merge_sort(arr_copy, 0, n - 1);
+    end = clock();
+    time_taken = ((double)(end - start)) / CLOCKS_PER_SEC;
+    printf("Merge Sort took %f seconds to sort 10000 elements.\n", time_taken);
+
+    // Quick Sort
+    copy_array(arr, arr_copy, n);
+    start = clock();
+    quick_sort(arr_copy, 0, n - 1);
+    end = clock();
+    time_taken = ((double)(end - start)) / CLOCKS_PER_SEC;
+    printf("Quick Sort took %f seconds to sort 10000 elements.\n", time_taken);
+
+    return 0;
+}
+
